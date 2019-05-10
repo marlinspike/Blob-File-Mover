@@ -5,11 +5,11 @@ moves the file to Azure Blob. All data movement is logged in an Azure Table.
 
 ## To use locally
 Here's what your local.settings.json file needs to look like:
-
+```
 {
     "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "<Your Connection String Here>",
+    "AzureWebJobsStorage": "YOUR-CONNECTION-STRING-HERE",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "Share-In": "file-in",
     "Share-Out": "file-out",
@@ -18,3 +18,4 @@ Here's what your local.settings.json file needs to look like:
     "Queue-Name": "file-items"
   }
 }
+```
