@@ -25,3 +25,8 @@ Here's what your local.settings.json file needs to look like:
 - Two Blob Containers: __blob-in__ and __blob-out__, for  Incoming and Outgoing blob storage respectively
 - One Queue:  __file-items__, used to track requests to move files from __share-out__ to __blob-out__
 - One Azure Table: __FileMover__, Created on the fly if it doesn't already exist
+
+## Data Flows
+The following data flows are implemented:
+- blob-in --> file-in
+- file-out --> queue --> blob-out
