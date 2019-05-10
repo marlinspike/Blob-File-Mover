@@ -19,7 +19,7 @@ namespace BlobMover.AzTable {
         public async static Task<int> writeToTable(string fileName, string source, Utility.NextHop nextHop, ExecutionContext context) {
             string TABLE_NAME = Utils.Utility.GetConfigurationItem(context, "LogTableName");
 
-            var connStr = Utils.Utility.GetConfigurationItem(context, "AzureWebJobsStorage");
+            var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connStr);
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
             CloudTable table = tableClient.GetTableReference(TABLE_NAME);

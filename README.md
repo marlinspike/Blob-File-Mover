@@ -12,6 +12,7 @@ Here's what your local.settings.json file needs to look like:
     "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "YOUR-CONNECTION-STRING-HERE",
+	"Storage_Connection_String":"YOUR-CONNECTION-STRING-HERE",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "LogTableName": "FileMover",
     "Share-In": "file-in",

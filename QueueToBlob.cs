@@ -14,7 +14,7 @@ namespace BlobMover
         [FunctionName("QueueToBlob")]
         public async static void Run([QueueTrigger("file-items", Connection = "")]string myQueueItem, ILogger log, ExecutionContext context) {
             string fileName = myQueueItem;//myQueueItem.Substring(myQueueItem.IndexOf("/", 1) + 1);
-            var connStr = Utils.Utility.GetConfigurationItem(context, "AzureWebJobsStorage");
+            var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
             var shareName = Utils.Utility.GetConfigurationItem(context, "Share-Out");
             var out_blobs = Utils.Utility.GetConfigurationItem(context, "Blob-Out");
 
@@ -43,7 +43,7 @@ namespace BlobMover
         }
 
         public async static void copyFileToBlobStorage(CloudFile file, string container, string blobPath, string fileShare, string fileName, ExecutionContext context) {
-            var connStr = Utils.Utility.GetConfigurationItem(context, "AzureWebJobsStorage");
+            var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
             string fileShortName = System.IO.Path.GetFileName(file.Uri.LocalPath);
 
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connStr);

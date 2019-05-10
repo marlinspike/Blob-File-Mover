@@ -16,7 +16,7 @@ namespace BlobMover
     {
         [FunctionName("BlobToFileCopy")]
         public static async Task RunAsync([BlobTrigger("blob-in/{name}", Connection = "")]Stream myBlob, string name, ILogger log, ExecutionContext context) {
-            var connStr = Utils.Utility.GetConfigurationItem(context, "AzureWebJobsStorage");
+            var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
             var fileShareName = Utils.Utility.GetConfigurationItem(context, "Share-In");
             string directoryName = null;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connStr);
