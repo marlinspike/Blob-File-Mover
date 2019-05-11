@@ -12,7 +12,7 @@ namespace BlobMover
     public static class QueueToBlob
     {
         [FunctionName("QueueToBlob")]
-        public async static void Run([QueueTrigger("file-items", Connection = "")]string myQueueItem, ILogger log, ExecutionContext context) {
+        public async static void Run([QueueTrigger("file-items", Connection = "Storage_Connection_String")]string myQueueItem, ILogger log, ExecutionContext context) {
             string fileName = myQueueItem;//myQueueItem.Substring(myQueueItem.IndexOf("/", 1) + 1);
             var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
             var shareName = Utils.Utility.GetConfigurationItem(context, "Share-Out");
