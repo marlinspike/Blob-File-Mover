@@ -11,7 +11,6 @@ Here's what your local.settings.json file needs to look like:
 {
     "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "YOUR-CONNECTION-STRING-HERE",
 	"Storage_Connection_String":"YOUR-CONNECTION-STRING-HERE",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "LogTableName": "FileMover",
@@ -34,3 +33,14 @@ Here's what your local.settings.json file needs to look like:
 The following data flows are implemented:
 - blob-in --> file-in
 - file-out --> queue --> blob-out
+
+## Testing
+These functions have been tested with sample data from https://www.thinkbroadband.com/download
+- 1GB: Several files at a time -- *works*
+- 200 MB: Several files at a time -- *works*
+
+## Limits
+Depending on how you run these functions (Consumption Plan or Premium), you will either hit the max execution time of 10 minutes, or
+a baseically unlimited execution time. At any rate, if you're frequently copying files much larger than 5 GB, you're likely
+looking some other solution, and although this will sill work, there's more tweaking you can do. I may be able to collaborate or offer some ideas if
+you have a need for higher performance copying.
