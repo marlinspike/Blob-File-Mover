@@ -15,7 +15,7 @@ namespace BlobMover
     public static class Function1
     {
         [FunctionName("BlobToFileCopy")]
-        public static async Task RunAsync([BlobTrigger("blob-in/{name}", Connection = "")]Stream myBlob, string name, ILogger log, ExecutionContext context) {
+        public static async Task RunAsync([BlobTrigger("blob-in/{name}", Connection = "Storage_Connection_String")]Stream myBlob, string name, ILogger log, ExecutionContext context) {
             var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
             var fileShareName = Utils.Utility.GetConfigurationItem(context, "Share-In");
             string directoryName = null;
@@ -35,10 +35,9 @@ namespace BlobMover
 
 
             cloudFile = shareDirectory.GetFileReference(name);
-            cloudFile.UploadFromStreamAsync(myBlob);
+            await cloudFile.UploadFromStreamAsync(myBlob);
 
             int statusCode = await AzTable.TableLogger.writeToTable(name, "Blob Storage",  Utils.Utility.NextHop.File_In, context);
-
         }
     }
 }
