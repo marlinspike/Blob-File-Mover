@@ -1,26 +1,10 @@
-# Starter pipeline
-
-trigger:
-- master
-
-pool:
-  vmImage: 'ubuntu-latest'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-- task: AzureFunctionApp@1
+- task: DotNetCoreCLI@2
+  displayName: Publish
   inputs:
-    azureSubscription: 'Microsoft Azure Internal Consumption(917416c8-760a-45f2-a774-671813cee4f9)'
-    appType: 'functionApp'
-    appName: 'rcFileBlobMover'
-    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
-    deploymentMethod: 'auto'
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+    command: publish
+    publishWebProjects: false
+    projects: '$(Parameters.RestoreBuildProjects)'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
