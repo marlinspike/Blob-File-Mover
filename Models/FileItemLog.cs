@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 
 namespace BlobMover.Models {
-    class FileItemLog : TableEntity {
+    public class FileItemLog : TableEntity {
 
         public FileItemLog(string fileName, string source, string nextHop) {
             this.Source = source;
@@ -15,7 +15,7 @@ namespace BlobMover.Models {
             this.FileName = fileName;
 
             this.PartitionKey = $"{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.DayOfWeek}";
-            this.RowKey = fileName;
+            this.RowKey = $"{fileName} - [{DateTime.Now.Second}.{DateTime.Now.Millisecond}]";
         }
 
         public DateTime LogTime { get; set; }

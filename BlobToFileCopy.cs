@@ -38,6 +38,8 @@ namespace BlobMover
             await cloudFile.UploadFromStreamAsync(myBlob);
 
             int statusCode = await AzTable.TableLogger.writeToTable(name, "Blob Storage",  Utils.Utility.NextHop.File_In, context);
+            if (statusCode >= 200)
+                log.LogInformation("File Motion logged to Table");
         }
     }
 }

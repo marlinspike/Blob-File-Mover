@@ -50,7 +50,10 @@ namespace BlobMover
             foreach (var file in lstFiles) {
                 await addFileToQueueAsync(queueName, file.Uri.ToString(), connStr);
                 string filename = System.IO.Path.GetFileName(file.Uri.LocalPath);
+                log.LogInformation($"Queued File: {filename}");
                 int statusCode = await AzTable.TableLogger.writeToTable(filename, "Azure Files", Utils.Utility.NextHop.Queue, context);
+                if (statusCode >= 200)
+                    log.LogInformation("File Motion logged to Table");
             }
         }
 

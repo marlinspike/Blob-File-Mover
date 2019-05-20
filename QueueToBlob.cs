@@ -6,14 +6,18 @@ using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.Storage.File;
 using Microsoft.Azure.Storage.DataMovement;
+using BlobMover.Models;
+using System.Threading.Tasks;
 
 namespace BlobMover
 {
     public static class QueueToBlob
     {
         [FunctionName("QueueToBlob")]
-        public async static void Run([QueueTrigger("file-items", Connection = "Storage_Connection_String")]string myQueueItem, ILogger log, ExecutionContext context) {
+        public static async void Run([QueueTrigger("file-items", Connection = "Storage_Connection_String")]string myQueueItem,
+            ILogger log, ExecutionContext context) {
             string fileName = myQueueItem;//myQueueItem.Substring(myQueueItem.IndexOf("/", 1) + 1);
+            string fileShortName = (new CloudFile(new Uri(fileName))).Name;
             var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
             var shareName = Utils.Utility.GetConfigurationItem(context, "Share-Out");
             var out_blobs = Utils.Utility.GetConfigurationItem(context, "Blob-Out");
@@ -32,17 +36,19 @@ namespace BlobMover
                 shareDirectory = fileShare.GetRootDirectoryReference().GetDirectoryReference(directoryName);
 
             // Get a reference to the file we created previously.
-            CloudFile file = shareDirectory.GetFileReference((new CloudFile(new Uri(fileName)).Name));
+            CloudFile file = shareDirectory.GetFileReference(fileShortName);
 
             // Ensure that the file exists.
             var bFileExists = file.Exists();
             if (file.Exists()) {
-                // Write the contents of the file to the console window.
-                copyFileToBlobStorage(file, out_blobs,"", shareName, fileName, context);
+                // Copy the file to Blob Storage
+                var success = await copyFileToBlobStorage(file, out_blobs,"", shareName, fileName, context, log);
+                if (success)
+                    log.LogInformation($"Copied File to Blob: {fileName}");
             }
         }
 
-        public async static void copyFileToBlobStorage(CloudFile file, string container, string blobPath, string fileShare, string fileName, ExecutionContext context) {
+        public async static Task<bool> copyFileToBlobStorage(CloudFile file, string container, string blobPath, string fileShare, string fileName, ExecutionContext context, ILogger log) {
             var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
             string fileShortName = System.IO.Path.GetFileName(file.Uri.LocalPath);
 
@@ -56,13 +62,19 @@ namespace BlobMover
             try {
                 await TransferManager.CopyAsync(source, target, true);
                 await source.DeleteAsync(); //delete the file from the out-file Share
+                int statusCode = await AzTable.TableLogger.writeToTable(fileShortName, "Queue", Utils.Utility.NextHop.Blob_Out, context);
+                if (statusCode >= 200)
+                    log.LogInformation("File Motion logged to Table");
+                return true;
             }
             catch(TransferException te) {
+                log.LogCritical($"Error copying to Blob: {te}");
                 Console.WriteLine("Exception copying Queue -> Blob: ");
+                return false;
             }
 
             
-            int statusCode = await AzTable.TableLogger.writeToTable(fileShortName, "Queue", Utils.Utility.NextHop.Blob_Out, context);
+           
         }
 
 
