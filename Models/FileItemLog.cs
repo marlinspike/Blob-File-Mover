@@ -15,7 +15,7 @@ namespace BlobMover.Models {
             this.FileName = fileName;
 
             this.PartitionKey = $"{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.DayOfWeek}";
-            this.RowKey = $"{fileName} - [{DateTime.Now.Second}.{DateTime.Now.Millisecond}]";
+            this.RowKey = this.id;
         }
 
         public DateTime LogTime { get; set; }
