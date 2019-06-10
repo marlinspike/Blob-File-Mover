@@ -14,7 +14,7 @@ namespace BlobMover
    
 
         [FunctionName("FileToQueueMessage")]
-        public static async void RunAsync([TimerTrigger("* */10 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context) {
+        public static async void RunAsync([TimerTrigger("* */1 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context) {
             //log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
 

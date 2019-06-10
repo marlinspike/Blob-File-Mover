@@ -12,6 +12,7 @@ Here's what your local.settings.json file needs to look like:
     "IsEncrypted": false,
   "Values": {
 	"Storage_Connection_String":"YOUR-CONNECTION-STRING-HERE",
+	"Dest_Storage_Connection_String": "DESTINATION-STORAGE-CONNECTION-STRING"
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "LogTableName": "FileMover",
     "Share-In": "file-in",

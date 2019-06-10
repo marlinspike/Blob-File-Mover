@@ -48,15 +48,23 @@ namespace BlobMover
             }
         }
 
+#   
         public async static Task<bool> copyFileToBlobStorage(CloudFile file, string container, string blobPath, string fileShare, string fileName, ExecutionContext context, ILogger log) {
+            var destConnStr = Utils.Utility.GetConfigurationItem(context, "Dest_Storage_Connection_String");
             var connStr = Utils.Utility.GetConfigurationItem(context, "Storage_Connection_String");
+
             string fileShortName = System.IO.Path.GetFileName(file.Uri.LocalPath);
 
+
+            //Refactored this to ensure that you can copy between storage accounts in different clouds and/or subscriptions
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connStr);
+            CloudStorageAccount destStorageAccount = CloudStorageAccount.Parse(destConnStr);
+
             CloudFileShare cloudFileShare = storageAccount.CreateCloudFileClient().GetShareReference(fileShare);
             CloudFile source = cloudFileShare.GetRootDirectoryReference().GetFileReference(fileShortName);
 
-            CloudBlobContainer blobContainer = storageAccount.CreateCloudBlobClient().GetContainerReference(container);
+
+            CloudBlobContainer blobContainer = destStorageAccount.CreateCloudBlobClient().GetContainerReference(container);
             CloudBlob target = blobContainer.GetBlockBlobReference(fileShortName);
 
             try {
@@ -68,6 +76,7 @@ namespace BlobMover
                 return true;
             }
             catch(TransferException te) {
+                var code = te.ErrorCode;
                 log.LogCritical($"Error copying to Blob: {te}");
                 Console.WriteLine("Exception copying Queue -> Blob: ");
                 return false;
